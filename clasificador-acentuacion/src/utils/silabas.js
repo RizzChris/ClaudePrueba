@@ -11,6 +11,7 @@ const vocalesFuertes = ['a', 'e', 'o', 'á', 'é', 'ó'];
  * Verifica si un carácter es una vocal
  */
 const esVocal = (letra) => {
+  if (!letra) return false;
   return vocales.includes(letra.toLowerCase());
 };
 
@@ -18,6 +19,7 @@ const esVocal = (letra) => {
  * Verifica si un carácter es una vocal débil
  */
 const esVocalDebil = (letra) => {
+  if (!letra) return false;
   return vocalesDebiles.includes(letra.toLowerCase());
 };
 
@@ -25,6 +27,7 @@ const esVocalDebil = (letra) => {
  * Verifica si un carácter es una vocal fuerte
  */
 const esVocalFuerte = (letra) => {
+  if (!letra) return false;
   return vocalesFuertes.includes(letra.toLowerCase());
 };
 
@@ -32,6 +35,7 @@ const esVocalFuerte = (letra) => {
  * Verifica si un carácter es una consonante
  */
 const esConsonante = (letra) => {
+  if (!letra) return false;
   return /[bcdfghjklmnñpqrstvwxyz]/i.test(letra);
 };
 
@@ -44,6 +48,11 @@ export const dividirEnSilabas = (palabra) => {
   }
 
   const palabraLimpia = palabra.toLowerCase().trim();
+
+  if (palabraLimpia.length === 0) {
+    return [];
+  }
+
   const silabas = [];
   let silabaActual = '';
 
@@ -57,13 +66,13 @@ export const dividirEnSilabas = (palabra) => {
     // Regla 1: Vocal + consonante + vocal = separar
     if (esVocal(letra) && esConsonante(siguiente) && esVocal(siguiente2)) {
       // Excepciones para grupos consonánticos inseparables
-      const grupoConsonantico = siguiente + siguiente2;
+      const grupoConsonantico = (siguiente || '') + (siguiente2 || '');
       const inseparables = ['ch', 'll', 'rr'];
 
       if (!inseparables.includes(grupoConsonantico)) {
         // Verificar si es un grupo consonántico que va junto (bl, br, cl, cr, dr, fl, fr, gl, gr, pl, pr, tr)
         const gruposJuntos = ['bl', 'br', 'cl', 'cr', 'dr', 'fl', 'fr', 'gl', 'gr', 'pl', 'pr', 'tr'];
-        const proximoGrupo = palabraLimpia[i + 1] + palabraLimpia[i + 2];
+        const proximoGrupo = (siguiente || '') + (siguiente2 || '');
 
         if (!gruposJuntos.includes(proximoGrupo)) {
           silabas.push(silabaActual);
@@ -73,7 +82,7 @@ export const dividirEnSilabas = (palabra) => {
     }
     // Regla 2: Vocal + consonante + consonante + vocal
     else if (esVocal(letra) && esConsonante(siguiente) && esConsonante(siguiente2)) {
-      const grupoCC = siguiente + siguiente2;
+      const grupoCC = (siguiente || '') + (siguiente2 || '');
       const gruposJuntos = ['bl', 'br', 'cl', 'cr', 'dr', 'fl', 'fr', 'gl', 'gr', 'pl', 'pr', 'tr', 'ch', 'll', 'rr'];
 
       // Si NO es un grupo que va junto, separar después de la primera consonante
